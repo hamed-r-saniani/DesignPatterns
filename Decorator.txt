@@ -1,0 +1,108 @@
+﻿نام دیگر آن
+
+Wrapper
+
+هست و یک کلاس دریافت میکنه و یک ویژگی به یک یا چند تا از آبجکت های اون اضافه میکنه و به استفاده کننده تحویل میده
+
+برای سیستم های قدیمی مناسب هست.
+
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+سلام! حتماً، خوشحالم که کمک می‌کنم.
+
+دیزاین پترن **Decorator** یا **تزیین‌کننده** در برنامه‌نویسی شیء‌گرا استفاده می‌شود برای اضافه کردن ویژگی‌های بیشتر به یک شیء، بدون تغییر در ساختار اصلی آن. این پترن به ما اجازه می‌دهد تا قابلیت‌های اضافی را به شیء اضافه کنیم به گونه‌ای که دیگر اشیاء مشابه تحت تأثیر قرار نگیرند.
+
+به طور خلاصه، این پترن شامل دو بخش اصلی است:
+1. **Component**: این بخش یک اینترفیس یا کلاس اصلی است که ویژگی‌های پایه را تعریف می‌کند.
+2. **Decorator**: این کلاس که از همون اینترفیس پیروی می‌کند، یک شیء از کلاس اصلی را دارد و از طرفی ویژگی‌های جدید خودش را به آن اضافه می‌کند.
+
+یک مثال ساده می‌تواند سرو یک فنجان قهوه باشد:
+- **Component**: یک فنجان قهوه ساده.
+- **Decorator**: شکر، شیر یا شکلات که به صورت تزیینی به قهوه اضافه می‌شود.
+
+اینطوری شما می‌توانید به سادگی یک فنجان قهوه ساده رو با اضافه کردن موارد جدید، بدون تغییر در ساختار اصلی، غنی‌تر کنید.
+
+امیدوارم این توضیح کمک کرده باشه!
+
+-------------------------------------------------------------------------------------------------------------
+البته! در ادامه مثالی از پیاده‌سازی پترن **Decorator** در زبان C# را مشاهده خواهید کرد.
+
+فرض کنید می‌خواهیم انواع مختلفی از قهوه‌ها را با ویژگی‌های اضافه شده مانند شیر یا شکر تولید کنیم.
+
+```csharp
+using System;
+
+// Component
+public abstract class Coffee
+{
+    public abstract string GetDescription();
+    public abstract double GetCost();
+}
+
+// Concrete Component
+public class SimpleCoffee : Coffee
+{
+    public override string GetDescription() => "Simple Coffee";
+    public override double GetCost() => 2.0;
+}
+
+// Decorator
+public abstract class CoffeeDecorator : Coffee
+{
+    protected Coffee _coffee;
+
+    public CoffeeDecorator(Coffee coffee)
+    {
+        _coffee = coffee;
+    }
+
+    public override string GetDescription() => _coffee.GetDescription();
+    public override double GetCost() => _coffee.GetCost();
+}
+
+// Concrete Decorators
+public class MilkDecorator : CoffeeDecorator
+{
+    public MilkDecorator(Coffee coffee) : base(coffee) { }
+
+    public override string GetDescription() => _coffee.GetDescription() + ", Milk";
+    public override double GetCost() => _coffee.GetCost() + 0.5;
+}
+
+public class SugarDecorator : CoffeeDecorator
+{
+    public SugarDecorator(Coffee coffee) : base(coffee) { }
+
+    public override string GetDescription() => _coffee.GetDescription() + ", Sugar";
+    public override double GetCost() => _coffee.GetCost() + 0.2;
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Coffee simpleCoffee = new SimpleCoffee();
+        Console.WriteLine($"{simpleCoffee.GetDescription()} : ${simpleCoffee.GetCost()}");
+
+        Coffee milkCoffee = new MilkDecorator(simpleCoffee);
+        Console.WriteLine($"{milkCoffee.GetDescription()} : ${milkCoffee.GetCost()}");
+
+        Coffee milkSugarCoffee = new SugarDecorator(milkCoffee);
+        Console.WriteLine($"{milkSugarCoffee.GetDescription()} : ${milkSugarCoffee.GetCost()}");
+    }
+}
+```
+
+در این مثال:
+
+- کلاس `Coffee` که یک اینترفیس (یا کلاس پایه) است که متدهای `GetDescription` و `GetCost` را تعریف می‌کند.
+- کلاس `SimpleCoffee` یک پیاده‌سازی ساده از `Coffee` است که یک قهوه ساده را نمایش می‌دهد.
+- کلاس `CoffeeDecorator` یک دکوریتور عمومی است که شامل یک شیء `Coffee` می‌باشد و همچنین اینترفیس `Coffee` را پیاده‌سازی می‌کند.
+- کلاس‌های `MilkDecorator` و `SugarDecorator` دکوریتورهای خاصی هستند که ویژگی‌های شیر و شکر را به قهوه اضافه می‌کنند.
+
+در بخش `Main`، ابتدا یک قهوه ساده تولید می‌شود. سپس با استفاده از دکوریتورها، ویژگی‌های شیر و شکر به آن اضافه می‌شود و نتایج در کنسول چاپ می‌شود.
+
+اینطوری می‌توانید بدون تغییر در ساختار اصلی کلاس‌ها، قابلیت‌های جدید به آنها اضافه کنید.

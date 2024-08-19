@@ -1,0 +1,295 @@
+﻿هرکجا که یک ساختار درختی از اشیا میخواستیم ایجاد کنیم میتوانیم از این الگو استفاده کنیم.
+
+به عنوان مثال برنامه نویسی ویندوز فرم به زبان سی شارپ ویا برنامه نویسی
+
+Asp.net Web form
+
+اومدن از این الگو استفاده کردن.
+
+در برنامه نویسی ویندوز فرم
+
+فرم ما یک شی است یک نمونه از کلاس فرم ایجاد شده. حال خود این فرم میتواند تعدادی ابزاری دیگه داخلش داشته باشه که میشه همون برگ ها یا همون شاخه ها. مثلا اگر یک دکمه به فرم اضافه کنیم اون فرم یک
+
+Container
+
+هست و اون دکمه یک برگ.
+
+Container
+
+میتونه
+
+Container
+
+ها و یا برگ های دیگه ای درون خودش داشته باشه ولی ما نمیتوانیم درون یک دکمه یک دکمه دیگر ایجاد کنیم.
+
+اگر بخواهیم تقسیم بندی کنیم این اشیا به دو دسته تقسیم بندی میشوند اشیا
+
+Composite
+
+و اشیا برگ به اصطلاح.
+
+اشیا برگ اشیایی هستند که خودشون چیزی درونشون قرار داده نمیشه و انتهای اون ساختار درختی هستند و اشیای
+
+Composite
+
+ما اشیایی هستند که درون خودشون میتونن یکسری اشیای دیگه داشته باشن و ما اگه بخواییم یک عملیات مشخص رو روی تمام این ابزار ها اجرا کنیم باید این کلاس ها یک ساختار داشته باشن که ما بتونیم برروی تمام اشیا با یک حلقه
+
+foreach
+
+مثلا یک متد اجرا کنیم
+
+
+
+به عنوان یک مثال دیگه فرض کنیم ما یک سفارش از دیجیکالا دادیم که در اون سفارش چندین محصول داریم  زمانی که دیجیکالا اون سفارش رو ارسال میکنه درون یک جعبه است زمانی که جعبه رو باز میکنیم درون اون جعبه بزرگ جعبه های کوچک تر دیگه ای هم هستن که هرکدوم از این جعبه ها میتونن حاوی اون محصول ما باشن و یا درون خودشون جعبه های دیگه ای داشته باشن که درون اون جعبه محصول ما قرار داده شده باشه که جعبه ها میشن همون
+
+Composite
+
+و محصولات میشن برگ های ما و اگر در یک برنامه کامپیوتری بخواهیم قیمت کل این جعبه رو بدتس بیاریم نیاز داریم یک
+
+foreach
+
+روی جعبه ها و محصولات درونش بزنیم.
+
+زمانی که یک کلاس
+
+box
+
+داریم و یک کلاس
+
+product
+
+نمیتونیم یک
+
+foreach
+
+بروی ذو تا شی مختلف بزنیم و اینجا می آییم یک کلاس
+
+Abstract
+
+به اسم
+
+Component
+
+ایجاد میکنیم و کلاس
+
+Box and Product
+
+از کلاس
+
+Component
+
+ما ارث بری میکنن و حال ساختارشون یک دست شده و ما میتونیم با یک
+
+Forach
+
+تمامی جعبه ها و محصولات رو پیمایش کنیم و قیمت کل رو محاسبه کنیم
+
+----------------------------------------------------------------------------------------
+
+البته! الگوی **Composite** یکی از الگوهای ساختاری است که به شما اجازه می‌دهد تا اشیاء را به صورت درختی سازماندهی کنید. این الگو به شما امکان می‌دهد تا اشیاء منفرد و ترکیبی را به صورت یکسان مدیریت کنید.
+
+### مثال ساده
+فرض کنید می‌خواهیم یک ساختار درختی از فایل‌ها و پوشه‌ها را مدل‌سازی کنیم. هر فایل و پوشه می‌تواند عملیات مشابهی مانند نمایش نام خود را انجام دهد.
+
+#### پیاده‌سازی
+```csharp
+using System;
+using System.Collections.Generic;
+
+// کامپوننت مشترک
+public interface IFileSystemComponent
+{
+    void Display(string indent);
+}
+
+// فایل (Leaf)
+public class File : IFileSystemComponent
+{
+    private string _name;
+
+    public File(string name)
+    {
+        _name = name;
+    }
+
+    public void Display(string indent)
+    {
+        Console.WriteLine($"{indent}- {_name}");
+    }
+}
+
+// پوشه (Composite)
+public class Directory : IFileSystemComponent
+{
+    private string _name;
+    private List<IFileSystemComponent> _components = new List<IFileSystemComponent>();
+
+    public Directory(string name)
+    {
+        _name = name;
+    }
+
+    public void Add(IFileSystemComponent component)
+    {
+        _components.Add(component);
+    }
+
+    public void Display(string indent)
+    {
+        Console.WriteLine($"{indent}+ {_name}");
+        foreach (var component in _components)
+        {
+            component.Display(indent + "  ");
+        }
+    }
+}
+
+// استفاده از الگوی Composite
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        IFileSystemComponent file1 = new File("File1.txt");
+        IFileSystemComponent file2 = new File("File2.txt");
+
+        Directory folder1 = new Directory("Folder1");
+        folder1.Add(file1);
+
+        Directory root = new Directory("Root");
+        root.Add(folder1);
+        root.Add(file2);
+
+        root.Display("");
+        // خروجی:
+        // + Root
+        //   + Folder1
+        //     - File1.txt
+        //   - File2.txt
+    }
+}
+```
+
+### توضیح مرحله به مرحله
+1. **کامپوننت مشترک** (`IFileSystemComponent`): این اینترفیس می‌گوید که هر کامپوننتی در سیستم فایل باید متد `Display` را داشته باشد.
+
+2. **فایل (Leaf)** (`File`): این کلاس نماینده فایل‌های منفرد است. متد `Display` نام فایل را نمایش می‌دهد.
+
+3. **پوشه (Composite)** (`Directory`): این کلاس نماینده پوشه‌ها است که می‌توانند شامل فایل‌ها و پوشه‌های دیگر باشند. متد `Display` نام پوشه را نمایش می‌دهد و سپس متد `Display` هر یک از کامپوننت‌های داخلی را فراخوانی می‌کند.
+
+4. **استفاده از الگوی Composite**: در بخش `Main`، ساختار درختی از فایل‌ها و پوشه‌ها ایجاد می‌شود. سپس متد `Display` برای ریشه درخت فراخوانی می‌شود که به ترتیب نام تمام فایل‌ها و پوشه‌ها را نمایش می‌دهد.
+
+این روش به ما اجازه می‌دهد که ساختارهای پیچیده‌ای از اشیاء را به صورت درختی مدل‌سازی کنیم و عملیات مشابهی را بر روی اشیاء منفرد و ترکیبی انجام دهیم.
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+البته، بیایید به شکل ساده‌تری توضیح بدهیم.
+
+### الگوی Composite به زبان ساده
+این الگو به شما امکان می‌دهد که اشیاء را به صورت سلسله‌مراتبی (مثل پوشه‌ها و فایل‌ها) سازماندهی و مدیریت کنید. 
+
+فرض کنید می‌خواهیم یک ساختار ساده برای فایل‌ها و پوشه‌ها ایجاد کنیم. هر فایل یک اسم دارد و هر پوشه ممکن است فایل‌ها یا پوشه‌های دیگری را در خود داشته باشد.
+
+### پیاده‌سازی ساده در C#
+
+1. **تعریف یک اینترفیس یا کلاس پایه برای همه موارد:**
+    - این کار کمک می‌کند تا فایل و پوشه به صورت یکسان مدیریت شوند.
+   
+2. **کلاس فایل ساده:**
+    - فقط نام فایل را نگه می‌دارد و نشان می‌دهد.
+   
+3. **کلاس پوشه ساده:**
+    - نام پوشه را نگه می‌دارد و مجموعه‌ای از فایل‌ها و پوشه‌های دیگر را می‌تواند در خود داشته باشد.
+
+#### کد ساده
+```csharp
+using System;
+using System.Collections.Generic;
+
+// تعریف یک رابط مشترک برای فایل و پوشه
+public interface IFileSystemComponent
+{
+    void Display(string indent);
+}
+
+// کلاس فایل که فقط نام دارد
+public class File : IFileSystemComponent
+{
+    private string _name;
+
+    public File(string name)
+    {
+        _name = name;
+    }
+
+    public void Display(string indent)
+    {
+        Console.WriteLine($"{indent}- {_name}");
+    }
+}
+
+// کلاس پوشه که می‌تواند فایل‌ها و پوشه‌های دیگر را در خود داشته باشد
+public class Directory : IFileSystemComponent
+{
+    private string _name;
+    private List<IFileSystemComponent> _components = new List<IFileSystemComponent>();
+
+    public Directory(string name)
+    {
+        _name = name;
+    }
+
+    // اضافه کردن فایل یا پوشه جدید
+    public void Add(IFileSystemComponent component)
+    {
+        _components.Add(component);
+    }
+
+    public void Display(string indent)
+    {
+        Console.WriteLine($"{indent}+ {_name}");
+        foreach (var component in _components)
+        {
+            component.Display(indent + "  ");
+        }
+    }
+}
+
+// استفاده از الگوی Composite
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // ایجاد فایل‌ها
+        IFileSystemComponent file1 = new File("File1.txt");
+        IFileSystemComponent file2 = new File("File2.txt");
+
+        // ایجاد پوشه و اضافه کردن فایل به آن
+        Directory folder1 = new Directory("Folder1");
+        folder1.Add(file1);
+
+        // ایجاد پوشه ریشه و اضافه کردن فایل‌ها و پوشه به آن
+        Directory root = new Directory("Root");
+        root.Add(folder1);
+        root.Add(file2);
+
+        // نمایش ساختار
+        root.Display("");
+    }
+}
+```
+
+### توضیح ساده
+1. **تعریف اینترفیس (IFileSystemComponent)**: هم فایل‌ها و هم پوشه‌ها باید بتوانند خود را نمایش دهند.
+
+2. **کلاس فایل (File)**:
+    - فقط یک اسم دارد و می‌تواند اسم خود را نمایش دهد.
+
+3. **کلاس پوشه (Directory)**:
+    - اسم دارد و می‌تواند فایل‌ها و پوشه‌های دیگر را در خود نگهداری و نمایش دهد.
+
+4. **استفاده از کلاس‌ها (Program)**:
+    - فایل‌ها و پوشه‌ها ایجاد و به پوشه‌های اصلی اضافه می‌شوند.
+    - پوشه ریشه نمایش داده می‌شود که به صورت درختی همه فایل‌ها و پوشه‌ها را نشان می‌دهد.
+
+این روش به شما اجازه می‌دهد که به راحتی ساختارهای درختی پیچیده را سازماندهی کنید.
+

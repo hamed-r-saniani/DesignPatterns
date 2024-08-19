@@ -1,0 +1,245 @@
+﻿جداسازی انتزاع و پیاده سازی
+
+ما بتونیم
+
+Abstract Class
+
+ها و
+
+Concrete Class
+
+هایی که اون رو پیاده سازی میکنن به صورت مستقل توسعه بدیم
+
+این پترن میاد و کلاس
+
+Abstract
+
+ما رو به دو بخش تقسیم میکنه یکی
+
+یکی برای فضای بیرونی که همون متد ها و پراپرتی ها هستن و اون چیزی هست که کلاینت میبینه و یکی پیاده سازی که بهش
+
+Implementor یا Bridge
+
+گفته میشه برای پیاده سازی های داخلی کلاس اولی و از کلاس دوممون میتونیم چندین پیاده سازی داشته باشیم و ما میتونیم پیاده سازی هاون رو بدون اینکه وابسته به
+
+Abstraction
+
+مون باشن تغییر بدیم و جدای از
+
+Abstraction
+
+این هارو توسعه بدیم حتی میتونیم
+
+Abstraction
+
+رو هم تغییر بدیم بدون اینکه نیاز باشه کلاس های پیاده سازیمون رو تغییر بدیم
+
+چطور این اتفاق میفته؟
+
+چون ما در کلاس
+
+Abstraction
+
+اولیمون دیگه ارث بری از
+
+Implementor
+
+نداریم در واقع یدونه نمونه
+
+Private
+
+از
+
+Implementor
+
+داخل
+
+Abstraction
+
+داریم و اینجا ارث بری وجود نداره و ما میتونیم این ها رو به همین صورت جدای از هم توسعه بدیم و اتصال محکمی به هم ندارن
+
+-------------------------------------------------------------------------------------------------------------
+
+البته! الگوی **Bridge** یکی دیگر از الگوهای طراحی است که برای جداسازی یک انتزاع (abstraction) از پیاده‌سازی‌اش به کار می‌رود تا این دو بتوانند به صورت مستقل تغییر کنند. این پترن زمانی مفید است که شما نیاز دارید تا عمق هر دو بخش (یعنی انتزاع و پیاده‌سازی) توسعه و تغییر یابند، بدون اینکه بر یکدیگر تأثیر بگذارند.
+
+### کاربردهای الگوی Bridge
+- زمانی که شما نیاز دارید تا یک سلسله مراتب کلاس با ابعاد مختلف (مثل شکل و رنگ) ایجاد کنید و نمی‌خواهید ترکیب‌های مختلفی از کلاس‌ها را ایجاد کنید.
+- زمانی که پیاده‌سازی خاصی از انتزاع ممکن است در حین اجرای برنامه نیاز به تعویض داشته باشد.
+
+### مثال ساده از الگوی Bridge در C#
+فرض کنید می‌خواهیم اشکال مختلفی را رسم کنیم که این اشکال ممکن است رنگ‌های مختلفی داشته باشند.
+
+#### پیاده‌سازی
+
+```csharp
+using System;
+
+// Implementor
+public interface IColor
+{
+    void ApplyColor();
+}
+
+// Concrete Implementors
+public class Red : IColor
+{
+    public void ApplyColor() => Console.WriteLine("Applying red color");
+}
+
+public class Blue : IColor
+{
+    public void ApplyColor() => Console.WriteLine("Applying blue color");
+}
+
+// Abstraction
+public abstract class Shape
+{
+    protected IColor _color;
+
+    protected Shape(IColor color)
+    {
+        _color = color;
+    }
+
+    public abstract void Draw();
+}
+
+// Refined Abstraction
+public class Circle : Shape
+{
+    public Circle(IColor color) : base(color) { }
+
+    public override void Draw()
+    {
+        Console.Write("Drawing Circle. ");
+        _color.ApplyColor();
+    }
+}
+
+public class Square : Shape
+{
+    public Square(IColor color) : base(color) { }
+
+    public override void Draw()
+    {
+        Console.Write("Drawing Square. ");
+        _color.ApplyColor();
+    }
+}
+
+// استفاده از الگوی Bridge
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Shape redCircle = new Circle(new Red());
+        Shape blueSquare = new Square(new Blue());
+
+        redCircle.Draw();
+        // خروجی: Drawing Circle. Applying red color
+
+        blueSquare.Draw();
+        // خروجی: Drawing Square. Applying blue color
+    }
+}
+```
+
+در این مثال:
+- **Implementor**: `IColor` اینترفیس پیاده‌سازی رنگ را تعریف می‌کند.
+- **Concrete Implementor**: کلاس‌های `Red` و `Blue` پیاده‌سازی خاصی از `IColor` هستند.
+- **Abstraction**: کلاس `Shape` یک انتزاع است که شکل‌های مختلف را معرفی می‌کند.
+- **Refined Abstraction**: `Circle` و `Square` شکل‌های خاصی از `Shape` هستند که روش `Draw` آنها با استفاده از رنگ‌های انتخاب‌شده پیاده‌سازی شده است.
+
+این الگو با جدا کردن بخش‌های مختلف پیاده‌سازی، امکان توسعه شکل‌ها و رنگ‌های مختلف را می‌دهد بدون اینکه نیاز به تغییر در کد پایه باشد.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+البته! اجازه بدهید الگوی **Bridge** را با یک مثال ساده‌تر و توضیحات روشن‌تر توضیح دهم.
+
+### مفهوم کلی
+الگوی **Bridge** به شما کمک می‌کند تا دو بخش مختلف از کدهای خود را از هم جدا کنید: یکی انتزاع (که چیزی را که قرار است انجام شود مشخص می‌کند) و دیگری پیاده‌سازی (که چگونگی انجام شدن آن را مشخص می‌کند). به این ترتیب، این دو بخش می‌توانند به صورت مستقل از هم تغییر کنند.
+
+### مثال ساده
+فرض کنید می‌خواهیم انواع مختلف خودروها را با موتورهای مختلف بسازیم. بدون استفاده از الگوی Bridge، مجبوریم برای هر ترکیب از خودرو و موتور یک کلاس جدید ایجاد کنیم. با استفاده از الگوی Bridge، می‌توانیم این کار را ساده‌تر انجام دهیم.
+
+#### پیاده‌سازی
+```csharp
+using System;
+
+// موتور (Implementor)
+public interface IEngine
+{
+    void Start();
+}
+
+public class GasolineEngine : IEngine
+{
+    public void Start() => Console.WriteLine("Gasoline engine started.");
+}
+
+public class ElectricEngine : IEngine
+{
+    public void Start() => Console.WriteLine("Electric engine started.");
+}
+
+// خودرو (Abstraction)
+public abstract class Car
+{
+    protected IEngine _engine;
+
+    protected Car(IEngine engine)
+    {
+        _engine = engine;
+    }
+
+    public abstract void Drive();
+}
+
+public class Sedan : Car
+{
+    public Sedan(IEngine engine) : base(engine) { }
+
+    public override void Drive()
+    {
+        Console.Write("Sedan is driving. ");
+        _engine.Start();
+    }
+}
+
+public class SUV : Car
+{
+    public SUV(IEngine engine) : base(engine) { }
+
+    public override void Drive()
+    {
+        Console.Write("SUV is driving. ");
+        _engine.Start();
+    }
+}
+
+// استفاده از الگوی Bridge
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Car sedanWithGasolineEngine = new Sedan(new GasolineEngine());
+        Car suvWithElectricEngine = new SUV(new ElectricEngine());
+
+        sedanWithGasolineEngine.Drive();
+        // خروجی: Sedan is driving. Gasoline engine started.
+
+        suvWithElectricEngine.Drive();
+        // خروجی: SUV is driving. Electric engine started.
+    }
+}
+```
+
+### توضیح مرحله به مرحله
+1. **موتور (Implementor)**: اینترفیس `IEngine` می‌گوید که هر نوع موتوری باید متد `Start` را داشته باشد. کلاس‌های `GasolineEngine` و `ElectricEngine` پیاده‌سازی‌های خاصی از اینترفیس `IEngine` هستند.
+   
+2. **خودرو (Abstraction)**: کلاس `Car` یک انتزاع است که می‌گوید هر خودرویی باید متد `Drive` را داشته باشد و حاوی یک موتور است. کلاس‌های `Sedan` و `SUV` پیاده‌سازی‌های خاصی از این انتزاع هستند.
+
+3. در بخش `Main`، ماشین‌هایی با ترکیبات مختلف از انواع موتورها ساخته می‌شوند و سادگی استفاده از الگوی Bridge باعث می‌شود که بتوانیم به راحتی ترکیبات مختلفی ایجاد کنیم بدون اینکه نیاز به تغییر در ساختار کلاس‌ها باشد.
+
+این مثال نشان می‌دهد که چطور می‌توانیم با استفاده از الگوی Bridge پیچیدگی‌ها را از هم جدا کنیم و کدهای خود را ساده‌تر و قابل تغییرتر نگه داریم.
+

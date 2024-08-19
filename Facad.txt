@@ -1,0 +1,136 @@
+﻿در دنیای واقعی فرض کنیم فروشگاهی نیست و ما برای خرید پنیر باید به کارخونه پگاه مراجعه کنیم حالا یک فروشگاهی وجود داره که میره این پنیر رو از پگاه میخره و ما میتونیم راحت از اون تهیه کنیم و مصرف کنیم این فروشگاه نقش همون
+
+Facad
+
+رو داره
+
+در سیستم های برنامه نویسی
+
+در برنامه های بزرگ متشکل از هزاران کلاس و چندیدن ساب سیستم که برای کاری با هم همکاری میکنند(مثلا ساب سیستم ثبت احوال و درگاه پرداخت بانکی و ..)
+
+اما در الگوی
+
+Facad
+
+یک کلاس میانی بین کلاینت یعنی کسی که میخواهد از ساب سیستم ها استفاده کنه و خود ساب سیستم ها و داخل این
+
+Facad
+
+میایی و فرآیند مون رو انجام میدیم و کلاینت میاد و فقط از خود الگوی
+
+Facad
+
+استفاده میکند و ارتباط بین کلاینت و ساب سیستم ها با هم به طور مستقیم قطع میشود و اگر زمانی ساب سیستم های ما تغییر کند نیازی نیست کلاینت ما تغییر کند ما فقط
+
+Facad
+
+رو تغییر میدیم.
+
+
+----------------------------------------------------------------------------------------------
+
+حتماً! پترن **Facade** در طراحی نرم‌افزار برای ارائه یک اینترفیس ساده و یکسان برای مجموعه‌ای از اینترفیس‌های پیچیده در یک سیستم استفاده می‌شود. به عبارت دیگر، این پترن یک "فاکاد" یا "پوشش" ساده ارائه می‌دهد تا تعامل با یک سیستم پیچیده را آسان‌تر کند.
+
+### کاربردهای پترن Facade
+- ساده‌سازی تعاملات پیچیده: شما می‌توانید مراحل پیچیده را درون یک سری کلاس‌ها و روش‌ها پنهان کنید و یک نقطه دسترسی ساده به آنها بدهید.
+- جداسازی کدها: این پترن به شما کمک می‌کند که بخش‌های مختلف یک سیستم بزرگ را از هم جدا کنید و اجازه می‌دهد که تغییرات در یک بخش تأثیری روی بخش‌های دیگر نداشته باشد.
+
+### مثال ساده از پترن Facade در C#
+فرض کنید می‌خواهیم یک سیستم سینمای خانگی را راه‌اندازی کنیم که شامل چندین جزء مانند تلویزیون، بلندگو و دی‌وی‌دی‌پلیر است.
+
+#### کلاس‌های سیستم پیچیده:
+
+```csharp
+using System;
+
+public class Television
+{
+    public void On() => Console.WriteLine("Television is On");
+    public void Off() => Console.WriteLine("Television is Off");
+}
+
+public class Speaker
+{
+    public void On() => Console.WriteLine("Speaker is On");
+    public void Off() => Console.WriteLine("Speaker is Off");
+}
+
+public class DVDPlayer
+{
+    public void On() => Console.WriteLine("DVD Player is On");
+    public void Off() => Console.WriteLine("DVD Player is Off");
+    public void Play() => Console.WriteLine("DVD Player is Playing");
+}
+```
+
+#### Facade کلاس:
+
+```csharp
+public class HomeTheaterFacade
+{
+    private readonly Television _television;
+    private readonly Speaker _speaker;
+    private readonly DVDPlayer _dvdPlayer;
+
+    public HomeTheaterFacade(Television television, Speaker speaker, DVDPlayer dvdPlayer)
+    {
+        _television = television;
+        _speaker = speaker;
+        _dvdPlayer = dvdPlayer;
+    }
+
+    public void WatchMovie()
+    {
+        Console.WriteLine("Get ready to watch a movie...");
+        _television.On();
+        _speaker.On();
+        _dvdPlayer.On();
+        _dvdPlayer.Play();
+    }
+
+    public void EndMovie()
+    {
+        Console.WriteLine("Shutting down the home theater...");
+        _dvdPlayer.Off();
+        _speaker.Off();
+        _television.Off();
+    }
+}
+```
+
+#### استفاده از Facade
+
+```csharp
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Television television = new Television();
+        Speaker speaker = new Speaker();
+        DVDPlayer dvdPlayer = new DVDPlayer();
+
+        HomeTheaterFacade homeTheater = new HomeTheaterFacade(television, speaker, dvdPlayer);
+
+        homeTheater.WatchMovie();
+        // خروجی:
+        // Get ready to watch a movie...
+        // Television is On
+        // Speaker is On
+        // DVD Player is On
+        // DVD Player is Playing
+
+        homeTheater.EndMovie();
+        // خروجی:
+        // Shutting down the home theater...
+        // DVD Player is Off
+        // Speaker is Off
+        // Television is Off
+    }
+}
+```
+
+در این مثال:
+- کلاس‌های `Television`, `Speaker` و `DVDPlayer` اجزاء مختلف سیستم سینمای خانگی را نمایندگی می‌کنند.
+- کلاس `HomeTheaterFacade` یک فاکاد ایجاد می‌کند که تنظیمات پیچیده سیستم را در دو متد `WatchMovie()` و `EndMovie()` جای می‌دهد.
+- این کد اصلی (در متد `Main`) به جای تعامل با هر جزء به صورت جداگانه، تنها با فاکاد کار می‌کند، که باعث می‌شود کد ساده‌تر و قابل فهم‌تر شود.
+

@@ -1,0 +1,123 @@
+﻿از این الگو برای صرفه جویی در مصرف حافظه استفاده میکنیم
+
+تعدای از برنامه ها هستن که ما مجبوریم تعدا زیادی از آبجکت ها یا همون کلاس هامون رو ایجاد کنیم مانند بازی های کامپیوتری که همه این ها ممکنه یک کلاس داشته باشن مثلا یک درخت رو در نظر بگیرید در یک بازی کامپیوتری یک کلاس درخت داریم که ما مجبوری در بازی هزاران آبکجت از اون درخت ایجاد کنیم که به کاربر نمایش بدیم.
+
+یا اینکه در برنامه های سه بعدی ممکنه ما از یک مدل سه بعدی مجبور بشیم چندین آبجکت نیو کنیم و اون رو به کاربر نمیاش بدیم.
+
+قاعدتا وقتی ما از یک کلاس یک آبجکت نیو میکنیم برای نگهداری اون آبجکت در حافظه رم سیستم یک حافظه بهش اختاصا داده میشه و یک مقداری رو از رم اشغال میکنه و اگر ما هزاران آبجکت از یک کلاس ایجاد کنیم قاعدتا حافظه خیلی زیادی برای این اشغال میشه در اینجور مواقع میتونیم از این الگو استفاده کنیم برای صرفه جویی در حافظه رم.
+
+هر کجایی که نیاز داشتیم از یک کلاسمون تعداد زیادی آبجکت نیو کنیم میتونیم برای صرفه جویی در مصرف حافظه از این الگو استفاده کنیم که این آبکت ها با اینکه ماهیتشون یکی هست میتونن تفاوت هایی هم با هم داشته باشن که این الگو این رو ساپورت میکنه
+
+
+-----------------------------------------------------------------------------------------
+
+الگوی **Flyweight** یکی از الگوهای ساختاری است که به شما کمک می‌کند تا تعداد زیادی از اشیاء مشابه را به صورت کارآمد مدیریت کنید. این الگو با اشتراک‌گذاری اشیاء، مصرف حافظه را کاهش می‌دهد.
+
+### مثال ساده
+فرض کنید می‌خواهیم یک برنامه برای نمایش درختان در یک جنگل ایجاد کنیم. هر درخت می‌تواند نوع، رنگ و موقعیت خود را داشته باشد. با استفاده از الگوی Flyweight، می‌توانیم نوع و رنگ درختان را به اشتراک بگذاریم و فقط موقعیت آن‌ها را جداگانه ذخیره کنیم.
+
+#### پیاده‌سازی
+```csharp
+using System;
+using System.Collections.Generic;
+
+// کلاس Flyweight که ویژگی‌های مشترک درختان را نگه می‌دارد
+public class TreeType
+{
+    public string Name { get; }
+    public string Color { get; }
+
+    public TreeType(string name, string color)
+    {
+        Name = name;
+        Color = color;
+    }
+
+    public void Display(int x, int y)
+    {
+        Console.WriteLine($"Tree of type {Name} and color {Color} at ({x}, {y})");
+    }
+}
+
+// کلاس FlyweightFactory که اشیاء Flyweight را مدیریت می‌کند
+public class TreeFactory
+{
+    private Dictionary<string, TreeType> _treeTypes = new Dictionary<string, TreeType>();
+
+    public TreeType GetTreeType(string name, string color)
+    {
+        string key = $"{name}_{color}";
+        if (!_treeTypes.ContainsKey(key))
+        {
+            _treeTypes[key] = new TreeType(name, color);
+        }
+        return _treeTypes[key];
+    }
+}
+
+// کلاس Context که موقعیت درختان را نگه می‌دارد
+public class Tree
+{
+    private int _x;
+    private int _y;
+    private TreeType _type;
+
+    public Tree(int x, int y, TreeType type)
+    {
+        _x = x;
+        _y = y;
+        _type = type;
+    }
+
+    public void Display()
+    {
+        _type.Display(_x, _y);
+    }
+}
+
+// استفاده از الگوی Flyweight
+public class Forest
+{
+    private List<Tree> _trees = new List<Tree>();
+    private TreeFactory _treeFactory = new TreeFactory();
+
+    public void PlantTree(int x, int y, string name, string color)
+    {
+        TreeType type = _treeFactory.GetTreeType(name, color);
+        Tree tree = new Tree(x, y, type);
+        _trees.Add(tree);
+    }
+
+    public void DisplayTrees()
+    {
+        foreach (var tree in _trees)
+        {
+            tree.Display();
+        }
+    }
+}
+
+// برنامه اصلی
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Forest forest = new Forest();
+        forest.PlantTree(1, 2, "Oak", "Green");
+        forest.PlantTree(3, 4, "Pine", "Green");
+        forest.PlantTree(5, 6, "Oak", "Green");
+        forest.PlantTree(7, 8, "Pine", "Green");
+
+        forest.DisplayTrees();
+    }
+}
+```
+
+### توضیح ساده
+1. **کلاس TreeType**: ویژگی‌های مشترک درختان مانند نوع و رنگ را نگه می‌دارد.
+2. **کلاس TreeFactory**: اشیاء TreeType را مدیریت و در صورت نیاز ایجاد می‌کند.
+3. **کلاس Tree**: موقعیت درختان را نگه می‌دارد و از TreeType برای نمایش استفاده می‌کند.
+4. **کلاس Forest**: درختان را می‌کارد و نمایش می‌دهد.
+
+این روش به شما کمک می‌کند تا تعداد زیادی از اشیاء مشابه را به صورت کارآمد مدیریت کنید و مصرف حافظه را کاهش دهید.
+

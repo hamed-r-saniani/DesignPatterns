@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35201.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CA0E7F58-058D-4F26-B00C-291A8F48CB2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{325B5661-59C2-44A5-BB21-CDED37236B60}"
+	ProjectSection(SolutionItems) = preProject
+		Abstract Factory.txt = Abstract Factory.txt
+		Adapter.txt = Adapter.txt
+		Bridge.txt = Bridge.txt
+		Decorator.txt = Decorator.txt
+		Composite.txt = Composite.txt
+		Facad.txt = Facad.txt
+		Flyweight.txt = Flyweight.txt
+		Proxy.txt = Proxy.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsPictures", "ProjectsPictures\ProjectsPictures.csproj", "{50B22774-7BA1-4181-BCDF-E50DA61930DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50B22774-7BA1-4181-BCDF-E50DA61930DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50B22774-7BA1-4181-BCDF-E50DA61930DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50B22774-7BA1-4181-BCDF-E50DA61930DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50B22774-7BA1-4181-BCDF-E50DA61930DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{50B22774-7BA1-4181-BCDF-E50DA61930DD} = {325B5661-59C2-44A5-BB21-CDED37236B60}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C02D5966-3F43-4B15-B6DD-6A7237286731}
+	EndGlobalSection
+EndGlobal

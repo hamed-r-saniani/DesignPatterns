@@ -1,0 +1,504 @@
+﻿در جلسه ی قبل با الگو
+
+Factory Method
+
+آشنا شدیم که در واقع یک کارخانه برای ایجاد نمونه از اشیا ما بودش و هر کلاینتی به نمونه احتیاج داشت میره از این کارخونه یک نمونه میگیره و استفاده میکنه اما مشکلاتی هم داشت مشکلش این بود که فقط یک جنس از محصولات رو میتونست برای ما تولید کنه که برای برنامه های بزرگ مناسب نیست و اگر برنامه ما بزرگ باشه مجبوریم تعداد زیادی
+
+Factory Method
+
+ایجاد کنیم.
+
+برای رفع این مشکل اومدن و
+
+Abstract Factory
+
+رو ایجاد کردن که یک کارخانه بزرگتر است که میتواند محصولات بیشتری را تولید کند و مثلا برای برنامه بزرگ نیاز نیست تعداد زیادی
+
+Factory Method
+
+ایجاد کنیم بلکه یک
+
+Abstract Factory
+
+ایجاد میکنیم که محصولات زیادی رو پشتیبانی میکنه و کلاینت ها میتونن محصولات یا کلاس هایی که بهش نیاز دارن رو نمونش رو از این
+
+Abstract Factory
+
+دریافت کنن
+
+در
+
+Abstract Factory
+
+ما میتونیم محصولات زیادی داشته باشیم و کارخانه های مختلفی داشته باشیم یعنی پیاده سازی های مختلفی داشته باشیم که دسته های مختلفی از محصولات رو برای ما نمونه سازی میکنن و در اختیارمون قرار میدن.
+
+نام دیگری که برای
+
+Abstract Factory
+
+در نظر گرفته شده
+
+Kit
+
+هست
+
+----------------------------------------------------------------------------------
+
+الگوی **Abstract Factory** یکی از الگوهای ساختاری است که به شما اجازه می‌دهد تا خانواده‌ای از اشیاء مرتبط یا وابسته را بدون مشخص کردن کلاس‌های دقیق آن‌ها ایجاد کنید. این الگو به شما کمک می‌کند تا سیستم‌های پیچیده‌ای را که نیاز به ایجاد اشیاء مختلف دارند، به صورت منظم و قابل تغییر پیاده‌سازی کنید.
+
+### مثال ساده
+فرض کنید می‌خواهیم یک سیستم برای ایجاد دکمه‌ها و چک‌باکس‌ها برای دو سیستم عامل مختلف (Windows و Mac) پیاده‌سازی کنیم.
+
+#### پیاده‌سازی
+```csharp
+// رابط دکمه
+public interface IButton
+{
+    void Paint();
+}
+
+// رابط چک‌باکس
+public interface ICheckbox
+{
+    void Paint();
+}
+
+// دکمه ویندوز
+public class WindowsButton : IButton
+{
+    public void Paint()
+    {
+        Console.WriteLine("Rendering a button in Windows style.");
+    }
+}
+
+// چک‌باکس ویندوز
+public class WindowsCheckbox : ICheckbox
+{
+    public void Paint()
+    {
+        Console.WriteLine("Rendering a checkbox in Windows style.");
+    }
+}
+
+// دکمه مک
+public class MacButton : IButton
+{
+    public void Paint()
+    {
+        Console.WriteLine("Rendering a button in Mac style.");
+    }
+}
+
+// چک‌باکس مک
+public class MacCheckbox : ICheckbox
+{
+    public void Paint()
+    {
+        Console.WriteLine("Rendering a checkbox in Mac style.");
+    }
+}
+
+// رابط کارخانه انتزاعی
+public interface IGUIFactory
+{
+    IButton CreateButton();
+    ICheckbox CreateCheckbox();
+}
+
+// کارخانه ویندوز
+public class WindowsFactory : IGUIFactory
+{
+    public IButton CreateButton()
+    {
+        return new WindowsButton();
+    }
+
+    public ICheckbox CreateCheckbox()
+    {
+        return new WindowsCheckbox();
+    }
+}
+
+// کارخانه مک
+public class MacFactory : IGUIFactory
+{
+    public IButton CreateButton()
+    {
+        return new MacButton();
+    }
+
+    public ICheckbox CreateCheckbox()
+    {
+        return new MacCheckbox();
+    }
+}
+
+// استفاده از الگوی Abstract Factory
+public class Application
+{
+    private readonly IButton _button;
+    private readonly ICheckbox _checkbox;
+
+    public Application(IGUIFactory factory)
+    {
+        _button = factory.CreateButton();
+        _checkbox = factory.CreateCheckbox();
+    }
+
+    public void Paint()
+    {
+        _button.Paint();
+        _checkbox.Paint();
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        IGUIFactory factory;
+
+        // انتخاب کارخانه بر اساس سیستم عامل
+        string os = "Windows"; // یا "Mac"
+        if (os == "Windows")
+        {
+            factory = new WindowsFactory();
+        }
+        else
+        {
+            factory = new MacFactory();
+        }
+
+        Application app = new Application(factory);
+        app.Paint();
+    }
+}
+```
+
+### توضیح ساده
+1. **رابط‌های IButton و ICheckbox**: رابط‌هایی برای دکمه و چک‌باکس تعریف می‌کنند.
+2. **کلاس‌های WindowsButton و WindowsCheckbox**: پیاده‌سازی دکمه و چک‌باکس برای ویندوز.
+3. **کلاس‌های MacButton و MacCheckbox**: پیاده‌سازی دکمه و چک‌باکس برای مک.
+4. **رابط IGUIFactory**: رابط کارخانه انتزاعی برای ایجاد دکمه و چک‌باکس.
+5. **کلاس‌های WindowsFactory و MacFactory**: پیاده‌سازی کارخانه برای ویندوز و مک.
+6. **کلاس Application**: استفاده از کارخانه برای ایجاد و استفاده از دکمه و چک‌باکس.
+7. **کلاس Program**: انتخاب کارخانه مناسب بر اساس سیستم عامل و استفاده از آن.
+
+این الگو به شما کمک می‌کند تا سیستم‌های پیچیده‌ای را که نیاز به ایجاد اشیاء مختلف دارند، به صورت منظم و قابل تغییر پیاده‌سازی کنید.
+
+---------------------------------------------------------------------------------------------------
+
+البته! بیایید الگوی **Abstract Factory** را به صورت ساده‌تر توضیح دهیم.
+
+### مفهوم کلی
+الگوی Abstract Factory به شما اجازه می‌دهد تا گروهی از اشیاء مرتبط یا وابسته را بدون مشخص کردن کلاس‌های دقیق آن‌ها ایجاد کنید. این الگو به شما کمک می‌کند تا سیستم‌هایی که نیاز به ایجاد اشیاء مختلف دارند، به صورت منظم و قابل تغییر پیاده‌سازی کنید.
+
+### مثال ساده
+فرض کنید می‌خواهیم یک سیستم برای ایجاد دکمه‌ها و چک‌باکس‌ها برای دو سیستم عامل مختلف (Windows و Mac) پیاده‌سازی کنیم.
+
+### مراحل پیاده‌سازی
+
+1. **تعریف رابط‌ها**:
+   - رابط‌هایی برای دکمه و چک‌باکس تعریف می‌کنیم.
+   ```csharp
+   public interface IButton
+   {
+       void Paint();
+   }
+
+   public interface ICheckbox
+   {
+       void Paint();
+   }
+   ```
+
+2. **پیاده‌سازی کلاس‌های مربوط به ویندوز**:
+   - کلاس‌هایی برای دکمه و چک‌باکس ویندوز ایجاد می‌کنیم.
+   ```csharp
+   public class WindowsButton : IButton
+   {
+       public void Paint()
+       {
+           Console.WriteLine("Rendering a button in Windows style.");
+       }
+   }
+
+   public class WindowsCheckbox : ICheckbox
+   {
+       public void Paint()
+       {
+           Console.WriteLine("Rendering a checkbox in Windows style.");
+       }
+   }
+   ```
+
+3. **پیاده‌سازی کلاس‌های مربوط به مک**:
+   - کلاس‌هایی برای دکمه و چک‌باکس مک ایجاد می‌کنیم.
+   ```csharp
+   public class MacButton : IButton
+   {
+       public void Paint()
+       {
+           Console.WriteLine("Rendering a button in Mac style.");
+       }
+   }
+
+   public class MacCheckbox : ICheckbox
+   {
+       public void Paint()
+       {
+           Console.WriteLine("Rendering a checkbox in Mac style.");
+       }
+   }
+   ```
+
+4. **تعریف رابط کارخانه انتزاعی**:
+   - رابطی برای کارخانه انتزاعی تعریف می‌کنیم که دکمه و چک‌باکس ایجاد می‌کند.
+   ```csharp
+   public interface IGUIFactory
+   {
+       IButton CreateButton();
+       ICheckbox CreateCheckbox();
+   }
+   ```
+
+5. **پیاده‌سازی کارخانه‌های مربوط به ویندوز و مک**:
+   - کارخانه‌هایی برای ایجاد دکمه و چک‌باکس ویندوز و مک ایجاد می‌کنیم.
+   ```csharp
+   public class WindowsFactory : IGUIFactory
+   {
+       public IButton CreateButton()
+       {
+           return new WindowsButton();
+       }
+
+       public ICheckbox CreateCheckbox()
+       {
+           return new WindowsCheckbox();
+       }
+   }
+
+   public class MacFactory : IGUIFactory
+   {
+       public IButton CreateButton()
+       {
+           return new MacButton();
+       }
+
+       public ICheckbox CreateCheckbox()
+       {
+           return new MacCheckbox();
+       }
+   }
+   ```
+
+6. **استفاده از الگوی Abstract Factory**:
+   - در برنامه اصلی، از کارخانه مناسب بر اساس سیستم عامل استفاده می‌کنیم.
+   ```csharp
+   public class Application
+   {
+       private readonly IButton _button;
+       private readonly ICheckbox _checkbox;
+
+       public Application(IGUIFactory factory)
+       {
+           _button = factory.CreateButton();
+           _checkbox = factory.CreateCheckbox();
+       }
+
+       public void Paint()
+       {
+           _button.Paint();
+           _checkbox.Paint();
+       }
+   }
+
+   public class Program
+   {
+       public static void Main(string[] args)
+       {
+           IGUIFactory factory;
+
+           // انتخاب کارخانه بر اساس سیستم عامل
+           string os = "Windows"; // یا "Mac"
+           if (os == "Windows")
+           {
+               factory = new WindowsFactory();
+           }
+           else
+           {
+               factory = new MacFactory();
+           }
+
+           Application app = new Application(factory);
+           app.Paint();
+       }
+   }
+   ```
+
+### توضیح ساده
+1. **رابط‌های IButton و ICheckbox**: رابط‌هایی برای دکمه و چک‌باکس تعریف می‌کنند.
+2. **کلاس‌های WindowsButton و WindowsCheckbox**: پیاده‌سازی دکمه و چک‌باکس برای ویندوز.
+3. **کلاس‌های MacButton و MacCheckbox**: پیاده‌سازی دکمه و چک‌باکس برای مک.
+4. **رابط IGUIFactory**: رابط کارخانه انتزاعی برای ایجاد دکمه و چک‌باکس.
+5. **کلاس‌های WindowsFactory و MacFactory**: پیاده‌سازی کارخانه برای ویندوز و مک.
+6. **کلاس Application**: استفاده از کارخانه برای ایجاد و استفاده از دکمه و چک‌باکس.
+7. **کلاس Program**: انتخاب کارخانه مناسب بر اساس سیستم عامل و استفاده از آن.
+
+این الگو به شما کمک می‌کند تا سیستم‌های پیچیده‌ای را که نیاز به ایجاد اشیاء مختلف دارند، به صورت منظم و قابل تغییر پیاده‌سازی کنید.
+
+----------------------------------------------------------------------------------------
+
+بله، این مثالی که شما مطرح کردید نیز به خوبی نشان‌دهنده الگوی **Abstract Factory** است. بیایید این مثال را به صورت دقیق‌تر و با استفاده از الگوی Abstract Factory پیاده‌سازی کنیم.
+
+### شرح مثال
+فرض کنید ما چند نرم‌افزار داریم که هر کدام پیام‌هایی را از طریق پیامک و ایمیل ارسال می‌کنند. هر نرم‌افزار دارای نام مخصوص خودش و لیست گیرندگان خاص خودش است. با استفاده از این الگو می‌توانیم سیستم ارسال پیام را برای هر نرم‌افزار پیاده‌سازی کنیم.
+
+### مراحل پیاده‌سازی
+
+1. **تعریف رابط‌ها**:
+   - رابطی برای سیستم ارسال پیامک و ایمیل تعریف می‌کنیم.
+   ```csharp
+   public interface ISmsSender
+   {
+       void SendSms(string message);
+   }
+
+   public interface IEmailSender
+   {
+       void SendEmail(string message);
+   }
+   ```
+
+2. **پیاده‌سازی کلاس‌های مربوط به سیستم‌های مختلف ارسال پیامک و ایمیل**:
+   - کلاس‌هایی برای سیستم ارسال پیامک و ایمیل نرم‌افزار اول و دوم ایجاد می‌کنیم.
+   ```csharp
+   public class Software1SmsSender : ISmsSender
+   {
+       public void SendSms(string message)
+       {
+           Console.WriteLine($"Software1 SMS: {message}");
+       }
+   }
+
+   public class Software1EmailSender : IEmailSender
+   {
+       public void SendEmail(string message)
+       {
+           Console.WriteLine($"Software1 Email: {message}");
+       }
+   }
+
+   public class Software2SmsSender : ISmsSender
+   {
+       public void SendSms(string message)
+       {
+           Console.WriteLine($"Software2 SMS: {message}");
+       }
+   }
+
+   public class Software2EmailSender : IEmailSender
+   {
+       public void SendEmail(string message)
+       {
+           Console.WriteLine($"Software2 Email: {message}");
+       }
+   }
+   ```
+
+3. **تعریف رابط کارخانه انتزاعی**:
+   - رابطی برای کارخانه انتزاعی تعریف می‌کنیم که سیستم ارسال پیامک و ایمیل ایجاد می‌کند.
+   ```csharp
+   public interface IMessageFactory
+   {
+       ISmsSender CreateSmsSender();
+       IEmailSender CreateEmailSender();
+   }
+   ```
+
+4. **پیاده‌سازی کارخانه‌های مربوط به نرم‌افزارها**:
+   - کارخانه‌هایی برای ایجاد سیستم ارسال پیامک و ایمیل نرم‌افزار اول و دوم ایجاد می‌کنیم.
+   ```csharp
+   public class Software1MessageFactory : IMessageFactory
+   {
+       public ISmsSender CreateSmsSender()
+       {
+           return new Software1SmsSender();
+       }
+
+       public IEmailSender CreateEmailSender()
+       {
+           return new Software1EmailSender();
+       }
+   }
+
+   public class Software2MessageFactory : IMessageFactory
+   {
+       public ISmsSender CreateSmsSender()
+       {
+           return new Software2SmsSender();
+       }
+
+       public IEmailSender CreateEmailSender()
+       {
+           return new Software2EmailSender();
+       }
+   }
+   ```
+
+5. **استفاده از الگوی Abstract Factory**:
+   - در برنامه اصلی، از کارخانه مناسب بر اساس نرم‌افزار استفاده می‌کنیم.
+   ```csharp
+   public class MessagingApplication
+   {
+       private readonly ISmsSender _smsSender;
+       private readonly IEmailSender _emailSender;
+
+       public MessagingApplication(IMessageFactory factory)
+       {
+           _smsSender = factory.CreateSmsSender();
+           _emailSender = factory.CreateEmailSender();
+       }
+
+       public void SendMessage(string message)
+       {
+           _smsSender.SendSms(message);
+           _emailSender.SendEmail(message);
+       }
+   }
+
+   public class Program
+   {
+       public static void Main(string[] args)
+       {
+           IMessageFactory factory;
+
+           // انتخاب کارخانه بر اساس نرم‌افزار
+           string software = "Software1"; // یا "Software2"
+           if (software == "Software1")
+           {
+               factory = new Software1MessageFactory();
+           }
+           else
+           {
+               factory = new Software2MessageFactory();
+           }
+
+           MessagingApplication app = new MessagingApplication(factory);
+           app.SendMessage("Hello, this is a test message!");
+       }
+   }
+   ```
+
+### توضیح کلی
+1. **رابط‌های ISmsSender و IEmailSender**: رابط‌هایی برای سیستم ارسال پیامک و ایمیل تعریف می‌کنند.
+2. **کلاس‌های Software1SmsSender و Software1EmailSender**: پیاده‌سازی سیستم ارسال پیامک و ایمیل برای نرم‌افزار اول.
+3. **کلاس‌های Software2SmsSender و Software2EmailSender**: پیاده‌سازی سیستم ارسال پیامک و ایمیل برای نرم‌افزار دوم.
+4. **رابط IMessageFactory**: رابط کارخانه انتزاعی برای ایجاد سیستم‌های ارسال پیامک و ایمیل.
+5. **کلاس‌های Software1MessageFactory و Software2MessageFactory**: پیاده‌سازی کارخانه برای نرم‌افزار اول و دوم.
+6. **کلاس MessagingApplication**: استفاده از کارخانه برای ایجاد و استفاده از سیستم‌های ارسال پیامک و ایمیل.
+7. **کلاس Program**: انتخاب کارخانه مناسب بر اساس نرم‌افزار و استفاده از آن.
+
+این مثال به خوبی نشان می‌دهد که چگونه می‌توان از الگوی Abstract Factory برای پیاده‌سازی سیستم‌های مختلف و قابل تغییر استفاده کرد.
+
